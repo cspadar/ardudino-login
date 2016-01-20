@@ -228,6 +228,7 @@ public class Bluetooth {
         }
         // Perform the write unsynchronized
         r.write(out);
+        Log.v(TAG, "r.write(out)");
     }
 
     /**
@@ -495,16 +496,17 @@ public class Bluetooth {
     public void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (this.getState() != Bluetooth.STATE_CONNECTED) {
-            Log.w(TAG, "bluetooth is not connected");
+            Log.w(TAG, "sendMessage: bluetooth is not connected");
             return;
         }
-
+            Log.w(TAG, "sendMessage: bluetooth is connected");
         // Check that there's actually something to send
         if (message.length() > 0) {
             char EOT = (char)3 ;
             // Get the message bytes and tell the BluetoothChatService to write
             byte[] send = (message + EOT).getBytes();
             this.write(send);
+            Log.d(TAG, "write() called");
         }
     }
 
