@@ -1,47 +1,52 @@
 #include <SoftwareSerial.h>
  
-SoftwareSerial Genotronex(7, 8); // TX, RX
+SoftwareSerial bluetooth(7, 8); // TX, RX
 
 #define MAX_BUFFER 4
 
 char data;
 char* buffer;
-boolean receiving = false;
+boolean receiving;
 int pos;
 
 void setup()  { 
-  Genotronex.begin(9600);
-  Serial.begin(9600);
-   buffer = new char[MAX_BUFFER];
-   pinMode(13, OUTPUT);
-   digitalWrite(13, LOW);
-   Genotronex.println("LASD");
+  receiving = false;
+  bluetooth.begin(9600);
+  buffer = new char[MAX_BUFFER];
+  pinMode(13, OUTPUT);
+  digitalWrite(13, LOW);
+  bluetooth.println("arduino setup end");
 } 
 
-void loop()  {
-  
-   while (Genotronex.available()){
-        
-        data=Genotronex.read();
-        
-         switch(data) {
-            //3: End of transmission
-            case 3:
-                    receiving = false;
-                    if(buffer[0] == 'a') {
-                    digitalWrite(13,HIGH);
-                    }
-                    if(buffer[0] == 'b') {
-                      digitalWrite(13, LOW);
-                      }
-                      Genotronex.println("G");
-                     break; //end message
-            default: if (receiving == false) resetData();
-                    buffer[pos] = data;
-                    pos++;
-                     receiving = true;          
-          }
-   }                      
+void loop()  
+{
+  while (bluetooth.available())
+  {
+    data = bluetooth.read();
+    if(data == 3)
+    {
+        if(buffer[0] == 'a') 
+        {
+          digitalWrite(13,HIGH);
+        }
+        else (buffer[0] == 'b') 
+        {
+          digitalWrite(13, LOW);
+        }
+        bluetooth.println("bluetooth: end message");
+        receiving = false;
+    }
+    else
+    {
+      if (receiving == false) 
+      {
+        resetData();
+      }
+      buffer[pos] = data;
+      pos++;
+      receiving = true; 
+    }
+  }                      
 }
 
  void resetData(){

@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG, "MESSAGE_WRITE ");
                     break;
                 case Bluetooth.MESSAGE_READ:
-                    byte[] content= (byte[]) msg.obj;
+                    byte[] content = (byte[]) msg.obj;
                     String readMessage = new String(content, 0, 4);
                     Log.d(TAG, "MESSAGE_READ: " + readMessage);
                     break;
