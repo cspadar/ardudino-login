@@ -10,17 +10,17 @@ boolean receiving;
 int pos;
 
 void setup()  { 
-  receiving = false;
-  bluetooth.begin(9600);
   buffer = new char[MAX_BUFFER];
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
-  bluetooth.println("arduino setup end");
+  bluetooth.begin(9600);
+  bluetooth.println('s');
+  receiving = true;
 } 
 
 void loop()  
 {
-  while (bluetooth.available())
+  if (bluetooth.available())
   {
     data = bluetooth.read();
     if(data == 3)
@@ -29,11 +29,11 @@ void loop()
         {
           digitalWrite(13,HIGH);
         }
-        else (buffer[0] == 'b') 
+        else if (buffer[0] == 'b') 
         {
           digitalWrite(13, LOW);
         }
-        bluetooth.println("bluetooth: end message");
+        bluetooth.println('r');
         receiving = false;
     }
     else

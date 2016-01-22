@@ -9,25 +9,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
+import java.util.*;
 
 public class MainActivity extends ActionBarActivity {
 
-    Button buttonLed, buttonLedOff;
+    private Button buttonLed, buttonLedOff;
     private Bluetooth bt;
-    TextView status, debug;
+    private TextView status, debug;
     public final String TAG = "Main";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         buttonLed = (Button) findViewById(R.id.buttonLed);
         buttonLedOff = (Button) findViewById(R.id.buttonLedOff);
 
@@ -86,8 +88,9 @@ public class MainActivity extends ActionBarActivity {
                     break;
                 case Bluetooth.MESSAGE_READ:
                     byte[] content = (byte[]) msg.obj;
-                    String readMessage = new String(content, 0, 4);
+                    String readMessage = new String(content,0,msg.arg1);
                     Log.d(TAG, "MESSAGE_READ: " + readMessage);
+                    pinOK(readMessage);
                     break;
                 case Bluetooth.MESSAGE_DEVICE_NAME:
                     Log.d(TAG, "MESSAGE_DEVICE_NAME "+msg);
@@ -98,6 +101,27 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     };
+
+    public void pinOK(String message)
+    {
+        if(message.equals("1"))
+        {
+            String secondCode = generateSecondCode();
+            status.setText(secondCode);
+            bt.sendMessage(secondCode);
+        }
+    }
+
+    public String generateSecondCode()
+    {
+        String temp = "";
+        Random rnd = new Random();
+        for(int i = 0; i < 4; i++)
+        {
+            temp += String.valueOf(rnd.nextInt(9) + 1);
+        }
+        return temp;
+    }
 
     public static Object deserializeBytes(byte[] bytes) throws IOException, ClassNotFoundException
     {
