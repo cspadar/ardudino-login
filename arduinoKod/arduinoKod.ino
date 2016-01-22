@@ -1,28 +1,27 @@
-#include <SoftwareSerial.h>
+#include <AltSoftSerial.h>
  
-SoftwareSerial Genotronex(7, 8); // TX, RX
+AltSoftSerial BT;
 
 #define MAX_BUFFER 4
 
 char data;
 char* buffer;
-boolean receiving = false;
+boolean receiving;
 int pos;
 
 void setup()  { 
-  Genotronex.begin(9600);
+  BT.begin(9600);
   Serial.begin(9600);
    buffer = new char[MAX_BUFFER];
    pinMode(13, OUTPUT);
    digitalWrite(13, LOW);
-   Genotronex.println("LASD");
 } 
 
 void loop()  {
   
-   while (Genotronex.available()){
+   while (BT.available()){
         
-        data=Genotronex.read();
+        data=BT.read();
         
          switch(data) {
             //3: End of transmission
@@ -30,11 +29,11 @@ void loop()  {
                     receiving = false;
                     if(buffer[0] == 'a') {
                     digitalWrite(13,HIGH);
+                    BT.println('g');
                     }
                     if(buffer[0] == 'b') {
                       digitalWrite(13, LOW);
                       }
-                      Genotronex.println("G");
                      break; //end message
             default: if (receiving == false) resetData();
                     buffer[pos] = data;
