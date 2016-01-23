@@ -502,9 +502,9 @@ public class Bluetooth {
             Log.w(TAG, "sendMessage: bluetooth is connected");
         // Check that there's actually something to send
         if (message.length() > 0) {
-            char EOT = (char)3 ;
+            //char EOT = (char)3 ;
             // Get the message bytes and tell the BluetoothChatService to write
-            byte[] send = (message + EOT).getBytes();
+            byte[] send = (message).getBytes();
             this.write(send);
             Log.d(TAG, "write() called");
         }

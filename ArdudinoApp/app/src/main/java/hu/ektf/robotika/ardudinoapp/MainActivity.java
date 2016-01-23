@@ -30,29 +30,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonLed = (Button) findViewById(R.id.buttonLed);
-        buttonLedOff = (Button) findViewById(R.id.buttonLedOff);
-
-        debug = (TextView) findViewById(R.id.textDebug);
         status = (TextView) findViewById(R.id.textStatus);
 
-        buttonLed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String m = "a";
-                debug.setText("Last message: " + m);
-                bt.sendMessage(m);
-            }
-        });
-
-        buttonLedOff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String m = "b";
-                debug.setText("Last message: " + m);
-                bt.sendMessage(m);
-            }
-        });
         bt = new Bluetooth(this, mHandler);
         connectService();
     }
@@ -63,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter.isEnabled()) {
                 bt.start();
-                bt.connectDevice("HC-05");
+                bt.connectDevice("HC-06");
                 Log.d(TAG, "Btservice started - listening");
                 status.setText("Connected");
             } else {
@@ -107,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
         if(message.equals("1"))
         {
             String secondCode = generateSecondCode();
-            status.setText(secondCode);
+            status.setText("PIN OK \n" + secondCode);
             bt.sendMessage(secondCode);
         }
     }

@@ -1,7 +1,7 @@
-#include <AltSoftSerial.h>
+#include <SoftwareSerial.h>
 #include <Keypad.h>
 
-AltSoftSerial altSerial;
+SoftwareSerial altSerial(8,9);
 
 const byte ROWS = 4; // Four rows
 const byte COLS = 4; // Three columns
@@ -23,23 +23,18 @@ Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 //Code stuffs
 char codeFromMobile[4];
 char codeFromKeypad[4];
-char pin[4] = {1,2,3,4};
+char pin[4] = {'1','2','3','4'};
 int actualChar = 0;
 int actualIndex = 0;
 
 void setup() {
-  Serial.begin(9600);
-  while(!Serial);
-  Serial.println("AltSoftSerial Test Begin");
   altSerial.begin(9600);
-  altSerial.println("h");
-  pinMode(13, OUTPUT);
   pinMode(12, OUTPUT);
 }
 
 void loop() {
-
   char key = kpd.getKey();
+  delay(50);
   if(key)  // Check for a valid key.
   {
     switch (key)
@@ -54,13 +49,11 @@ void loop() {
       //Send the code to mobile
       actualChar = 0;
       if(compareCharArrays(codeFromKeypad, pin)){
-        digitalWrite(13, HIGH);
-        altSerial.println(1);
+        altSerial.println('1');
         }
       emptyCharArray(codeFromKeypad);
         break;
       default:
-        Serial.println(key);
         if(actualChar < 4 && actualIndex == 0) 
           {
           codeFromKeypad[actualChar] = key;
@@ -77,21 +70,23 @@ void loop() {
   char c;
   
   if (altSerial.available()) {
+    if(c!=3) {
     c = altSerial.read();
     codeFromMobile[actualIndex] = c;
     actualIndex++;
+    }
   }
 }
 
 boolean compareCharArrays(char a[], char b[]) {
-  for(int i=0; i<sizeof(a); i++) {
+  for(int i=0; i<4; i++) {
     if(a[i] != b[i]) return false;
     }
     return true;
   }
 
 void emptyCharArray(char a[]) {
-  for(int i=0; i<sizeof(a); i++) {
+  for(int i=0; i<4; i++) {
     a[i] = -1;
     }
   }
